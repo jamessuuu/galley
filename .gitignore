@@ -1,0 +1,21 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Materialized fixture repo (rebuilt from the committed .bundle at test time)
+fixtures/sample-repo/
+
+# Remotion render scratch (Chrome headless shell cache, temp renders)
+.remotion/
+out/
+*.mp4.tmp
+
+# Local render output that isn't the committed example
+/render-*.mp4
+/render-*.png
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json

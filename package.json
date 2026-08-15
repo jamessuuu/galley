@@ -1,0 +1,58 @@
+{
+  "name": "galley",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Renders a repo's real commits, CI runs, and test counts into a release video. Every number is pulled straight from the pipeline — none of it is typed in by hand.",
+  "license": "MIT",
+  "author": "James Lorenz Santos",
+  "homepage": "https://github.com/jamessuuu/galley",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamessuuu/galley.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "galley": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "public",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "brand": "node scripts/brand.mjs --project=galley --out=public/brand",
+    "fixture:build": "tsx scripts/build-fixture-repo.ts",
+    "cli": "tsx src/cli/index.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.512",
+    "@remotion/fonts": "4.0.512",
+    "@remotion/renderer": "4.0.512",
+    "commander": "^15.0.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.512",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.4",
+    "eslint": "^9.20.0",
+    "sharp": "^0.35.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.0",
+    "vitest": "^4.1.10"
+  }
+}
