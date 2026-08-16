@@ -11,9 +11,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { getVideoMetadata } from "@remotion/renderer";
 import { EXAMPLE_PROPS } from "./exampleProps.js";
-import { bundleCompositionEntry, renderPoster } from "./renderPipeline.js";
-import { BEAT_DURATIONS } from "./timing.js";
+import { bundleCompositionEntry, renderPoster, renderVideo } from "./renderPipeline.js";
+import { BEAT_DURATIONS, SMOKE_TEST_COMPOSITION_ID, SMOKE_TEST_DURATION_IN_FRAMES, SMOKE_TEST_FPS } from "./timing.js";
 
 const BUNDLE_TIMEOUT_MS = 300_000; // first run may download Chrome Headless Shell (~110MB)
 const RENDER_TIMEOUT_MS = 60_000;
@@ -88,6 +89,33 @@ describe("renderPipeline e2e (real Remotion bundle + render, no mocks)", () => {
         frame: closingBeatStartFrame + 30,
       });
       assertRealPng(outputPath);
+    },
+    RENDER_TIMEOUT_MS
+  );
+
+  it(
+    "renders a REAL mp4 (docs/SPEC.md verification plan's '3-5s test composition') with a probe-verified duration",
+    async () => {
+      const outputPath = join(outDir, "smoke-test.mp4");
+      const result = await renderVideo({
+        serveUrl,
+        outputPath,
+        compositionId: SMOKE_TEST_COMPOSITION_ID,
+      });
+
+      expect(result.outputPath).toBe(outputPath);
+      expect(result.durationInFrames).toBe(SMOKE_TEST_DURATION_IN_FRAMES);
+      expect(result.fps).toBe(SMOKE_TEST_FPS);
+      expect(existsSync(outputPath)).toBe(true);
+      expect(statSync(outputPath).size).toBeGreaterThan(500);
+
+      const expectedSeconds = SMOKE_TEST_DURATION_IN_FRAMES / SMOKE_TEST_FPS;
+      const metadata = await getVideoMetadata(outputPath);
+      expect(metadata.durationInSeconds).not.toBeNull();
+      expect(Math.abs((metadata.durationInSeconds ?? 0) - expectedSeconds)).toBeLessThanOrEqual(0.5);
+      // docs/limitations.md: "No audio track in v1." Proven against the
+      // real rendered file, not just asserted in prose.
+      expect(metadata.audioCodec).toBeNull();
     },
     RENDER_TIMEOUT_MS
   );

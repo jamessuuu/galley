@@ -22,3 +22,10 @@ export const TOTAL_DURATION_IN_FRAMES = (
 
 // 36s at 30fps — inside docs/SPEC.md's 30-45s default range.
 export const TOTAL_DURATION_SECONDS = TOTAL_DURATION_IN_FRAMES / FPS;
+
+// SmokeTest composition (src/render/composition/SmokeTest.tsx) — the
+// verification plan's "3-5s test composition", kept deliberately separate
+// from ReleaseCard's timing.
+export const SMOKE_TEST_FPS = 30;
+export const SMOKE_TEST_DURATION_IN_FRAMES = 4 * SMOKE_TEST_FPS; // 4s
+export const SMOKE_TEST_COMPOSITION_ID = "RenderSmokeTest";

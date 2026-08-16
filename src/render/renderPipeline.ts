@@ -1,13 +1,13 @@
 // The local render pipeline (docs/SPEC.md §"CLI surface": "Local rendering
 // via @remotion/bundler + @remotion/renderer. No cloud, no keys."). M3
-// wires the bundle step + the poster (still-frame) renderer; the CLI
-// `render`/`poster` commands and the full video renderer (renderMedia) are
-// wired in M4 alongside the real committed example render.
+// wired the bundle step + the poster (still-frame) renderer; M4 adds the
+// full video renderer (renderMedia), wired to the CLI's `render`/`poster`
+// commands in src/cli/renderCommand.ts.
 
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundle } from "@remotion/bundler";
-import { renderStill, selectComposition } from "@remotion/renderer";
+import { makeCancelSignal, renderMedia, renderStill, selectComposition } from "@remotion/renderer";
 import type { ReleaseCardProps } from "./compositionProps.js";
 
 // Resolves to <repoRoot>/src/render/index.ts regardless of whether THIS
@@ -61,15 +61,18 @@ export async function bundleCompositionEntry(): Promise<BundledComposition> {
 
 export interface RenderPosterOptions {
   serveUrl: string;
-  inputProps: ReleaseCardProps;
+  /** Defaults to ReleaseCard's own defaultProps (src/render/exampleProps.ts) if omitted. */
+  inputProps?: ReleaseCardProps | Record<string, unknown>;
   outputPath: string;
   /**
    * Frame to capture, default 0. The poster is meaningful at frame 0 only
    * when the caller passes `reducedMotion: true` in inputProps — that's
    * what makes frame 0 of beat 1 the fully-settled title card instead of
-   * a mid-entrance-animation frame. galley's CLI (M4) always forces this.
+   * a mid-entrance-animation frame. galley's CLI always forces this.
    */
   frame?: number;
+  /** Which registered composition to render. Defaults to "ReleaseCard" — the CLI never overrides this; only the render-pipeline e2e test does (SmokeTest). */
+  compositionId?: string;
 }
 
 export interface RenderPosterResult {
@@ -83,11 +86,12 @@ export async function renderPoster({
   inputProps,
   outputPath,
   frame = 0,
+  compositionId = COMPOSITION_ID,
 }: RenderPosterOptions): Promise<RenderPosterResult> {
   const composition = await selectComposition({
     serveUrl,
-    id: COMPOSITION_ID,
-    inputProps,
+    id: compositionId,
+    ...(inputProps ? { inputProps } : {}),
   });
 
   await renderStill({
@@ -95,9 +99,121 @@ export async function renderPoster({
     serveUrl,
     output: outputPath,
     frame,
-    inputProps,
     imageFormat: "png",
+    ...(inputProps ? { inputProps } : {}),
   });
 
   return { outputPath };
+}
+
+// docs/SPEC.md §"CLI surface": "Render timeout enforced (default 10 min)
+// with an honest error."
+export const DEFAULT_RENDER_TIMEOUT_MS = 10 * 60 * 1000;
+
+export class RenderTimeoutError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RenderTimeoutError";
+  }
+}
+
+export interface RenderVideoProgress {
+  renderedFrames: number;
+  totalFrames: number;
+}
+
+export interface RenderVideoOptions {
+  serveUrl: string;
+  /** Defaults to the composition's own defaultProps if omitted. */
+  inputProps?: ReleaseCardProps | Record<string, unknown>;
+  outputPath: string;
+  /** Wall-clock budget for the WHOLE render (bundle already done). Default 10 min per docs/SPEC.md. */
+  timeoutMs?: number;
+  onProgress?: (progress: RenderVideoProgress) => void;
+  /** Which registered composition to render. Defaults to "ReleaseCard" — only the render-pipeline e2e test overrides this (SmokeTest). */
+  compositionId?: string;
+}
+
+export interface RenderVideoResult {
+  outputPath: string;
+  durationInFrames: number;
+  fps: number;
+}
+
+/**
+ * Renders a REAL H.264 mp4 (a real headless-Chromium capture + ffmpeg
+ * encode, not a mock) of the ReleaseCard composition. Enforces a hard
+ * wall-clock timeout: races the render against a timer that both cancels
+ * the in-flight render (via Remotion's cancelSignal, so the browser/ffmpeg
+ * work actually stops) and rejects with a named, honest RenderTimeoutError
+ * — Remotion's own `timeoutInMilliseconds` option governs per-frame
+ * delayRender waits, not total render wall-clock time, so it can't do this
+ * job by itself.
+ */
+export async function renderVideo({
+  serveUrl,
+  inputProps,
+  outputPath,
+  timeoutMs = DEFAULT_RENDER_TIMEOUT_MS,
+  onProgress,
+  compositionId = COMPOSITION_ID,
+}: RenderVideoOptions): Promise<RenderVideoResult> {
+  const composition = await selectComposition({
+    serveUrl,
+    id: compositionId,
+    ...(inputProps ? { inputProps } : {}),
+  });
+
+  const { cancelSignal, cancel } = makeCancelSignal();
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(() => {
+      cancel();
+      reject(
+        new RenderTimeoutError(
+          `render of ${composition.durationInFrames} frames did not finish within ${(
+            timeoutMs / 60_000
+          ).toFixed(1)} min and was aborted — pass a longer timeout or check machine load`
+        )
+      );
+    }, timeoutMs);
+  });
+
+  const renderPromise = renderMedia({
+    composition,
+    serveUrl,
+    codec: "h264",
+    outputLocation: outputPath,
+    cancelSignal,
+    // docs/SPEC.md: "there is no audio track in v1 — silence is honest, a
+    // music bed is v2." The composition never renders an <Audio>/<Video>
+    // component, but Remotion still muxes a (silent) AAC track into the
+    // mp4 container by default — muted:true suppresses that track
+    // entirely so the shipped file matches the written claim literally,
+    // not just in practice.
+    muted: true,
+    ...(inputProps ? { inputProps } : {}),
+    ...(onProgress
+      ? {
+          onProgress: (p: { renderedFrames: number }) =>
+            onProgress({
+              renderedFrames: p.renderedFrames,
+              totalFrames: composition.durationInFrames,
+            }),
+        }
+      : {}),
+  });
+
+  try {
+    await Promise.race([renderPromise, timeoutPromise]);
+  } finally {
+    clearTimeout(timer);
+  }
+
+  return {
+    outputPath,
+    durationInFrames: composition.durationInFrames,
+    fps: composition.fps,
+  };
 }

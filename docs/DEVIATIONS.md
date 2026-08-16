@@ -66,6 +66,18 @@ for the CLI path, `exampleProps.ts` imports it directly for the render
 path. Rule for future code: nothing under `src/render/composition/` (or
 anything it imports, even transitively) may import `brandConfig.ts` itself.
 
+## M4 — `renderMedia` needed an explicit `muted: true` to honor "no audio track"
+
+**Not a spec deviation** (the shipped behavior matches docs/limitations.md's
+"No audio track in v1" exactly), recorded because it wasn't automatic: even
+though the composition never renders an `<Audio>`/`<Video>` component,
+`@remotion/renderer`'s `renderMedia` still muxed a silent AAC track into
+the output mp4 by default (confirmed via `getVideoMetadata` — `audioCodec:
+"aac"` on an unmuted render). Passing `muted: true` to `renderMedia`
+(`src/render/renderPipeline.ts`) suppresses the track entirely
+(`audioCodec: null`), which the e2e test (`renderPipeline.e2e.test.ts`)
+now asserts against a real rendered file rather than trusting prose.
+
 ## M3 — `bundleCompositionEntry` needs a `webpackOverride` for NodeNext imports
 
 **Not a spec deviation**, recorded as a real integration snag worth knowing
