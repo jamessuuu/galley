@@ -5,11 +5,22 @@
 // rendering starts) and fail loudly with the computed ratio, per spec.
 
 import { readFileSync, existsSync } from "node:fs";
-import { dirname, isAbsolute, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { DEFAULT_BRAND } from "./defaultBrand.js";
 
 export { DEFAULT_BRAND };
+
+// DEFAULT_BRAND.logoSvgPath ("public/brand/glyph.svg") ships INSIDE
+// galley's own package (package.json's `files` includes "public"), not
+// inside whatever repo the CLI is pointed at — so when no --brand is
+// given, it must resolve relative to galley's OWN install location, never
+// process.cwd(). A real user runs `galley render` from their own project's
+// directory, not from inside galley's package folder; resolving against
+// cwd there would throw "brand logo not found" every time. Same
+// src-and-dist-sit-at-equal-depth trick as renderPipeline.ts's REPO_ROOT.
+const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 const hexColor = z
   .string()
@@ -121,7 +132,7 @@ export function loadBrandConfig(configPath?: string): ResolvedBrand {
     baseDir = dirname(absPath);
   } else {
     raw = DEFAULT_BRAND;
-    baseDir = process.cwd();
+    baseDir = PACKAGE_ROOT;
   }
 
   const result = BrandConfigSchema.safeParse(raw);

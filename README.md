@@ -31,15 +31,43 @@ on-demand tool: run it against a tag range and get a video for that release.
 npm install
 npm run build
 
+# Render a video from a real repo's real release range.
 node dist/cli/index.js render \
   --repo /path/to/some/repo \
   --from v1.0.0 --to v1.1.0 \
   --out release.mp4
+
+# Same data, one still frame — for a README badge or a social card.
+node dist/cli/index.js poster \
+  --repo /path/to/some/repo \
+  --from v1.0.0 --to v1.1.0 \
+  --out release.png
+
+# Optional flags on either command:
+#   --brand brand.json     custom { name, accent, ink, paper, logoSvgPath?, font? }
+#   --facts facts.json     CI-produced test/coverage/custom facts (see below)
+#   --reduced-motion       static cards, same data, no animation (render only —
+#                           poster always renders the static variant)
 ```
 
-See [docs/SPEC.md](docs/SPEC.md) for the full CLI surface (`render`,
-`facts init`, `poster`) and [docs/limitations.md](docs/limitations.md) before
-you trust a number on screen.
+`examples/sample-repo-v1.1.0.mp4` in this repo is a real output of the
+`render` command above, run against the committed fixture repo
+(`fixtures/sample-repo/`, no GitHub remote configured) — 1280×720, 36s,
+473KB, no audio track. It's the actual D1 verification artifact, not a
+hand-picked demo.
+
+To wire `facts.json` into your own CI:
+
+```bash
+node dist/cli/index.js facts init
+```
+
+prints the copy-paste CI step (runs your test suite through vitest's JSON
+reporter and writes `facts.json` from the real pass/total counts).
+
+See [docs/SPEC.md](docs/SPEC.md) for the full CLI surface and
+[docs/limitations.md](docs/limitations.md) before you trust a number on
+screen.
 
 ## Why every number is real
 

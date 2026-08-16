@@ -66,6 +66,24 @@ for the CLI path, `exampleProps.ts` imports it directly for the render
 path. Rule for future code: nothing under `src/render/composition/` (or
 anything it imports, even transitively) may import `brandConfig.ts` itself.
 
+## M5 — default brand's logo resolved against the wrong root (real bug, fixed)
+
+**Not a spec deviation** — this is a defect the M5 "contrast validation"
+test pass (`src/brand/brandConfig.test.ts`) caught before it shipped
+further, recorded per the honesty architecture rather than silently
+patched. `loadBrandConfig()` with no `--brand` flag resolved
+`DEFAULT_BRAND.logoSvgPath` ("public/brand/glyph.svg", which ships INSIDE
+galley's own package) against `process.cwd()`. That's correct only by
+coincidence when cwd happens to be galley's own repo root — a real user
+runs `galley render` from THEIR project's directory, not galley's, so the
+default case would throw "brand logo not found" for every real invocation
+without `--brand`. Verified the failure first (ran `loadBrandConfig()`
+from an unrelated tmp directory, got exactly that error), then fixed it to
+resolve against galley's own package root (same
+`fileURLToPath(import.meta.url)` + up-two-dirs trick `renderPipeline.ts`
+already uses for its entry point), and added a regression test that
+`chdir`s to a tmp directory before calling `loadBrandConfig()`.
+
 ## M4 — `renderMedia` needed an explicit `muted: true` to honor "no audio track"
 
 **Not a spec deviation** (the shipped behavior matches docs/limitations.md's
