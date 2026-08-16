@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "echo skip-install (site/ is committed static output)",
+  "installCommand": "echo skip-install",
   "buildCommand": "echo skip-build",
   "outputDirectory": "site"
 }
