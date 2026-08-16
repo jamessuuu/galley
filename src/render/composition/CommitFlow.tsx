@@ -100,10 +100,26 @@ export function CommitFlow({
                 display: "flex",
                 alignItems: "baseline",
                 gap: 12,
+                minWidth: 0, // required for the ellipsis span below to shrink inside a flex row
               }}
             >
-              <span style={{ color: brand.accent }}>{"›"}</span>
-              <span>{msg}</span>
+              <span style={{ color: brand.accent, flexShrink: 0 }}>{"›"}</span>
+              {/* Real commit subjects have no length limit, and a wrapped
+                  second line pushes the caption/source label off the
+                  bottom of the frame (found dogfooding against dogwatch's
+                  real history, docs/DEVIATIONS.md M6). Single-line clamp
+                  with an ellipsis keeps every beat's layout fixed-height
+                  regardless of what a real repo's commit messages say. */}
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
+                }}
+              >
+                {msg}
+              </span>
             </div>
           );
         })}

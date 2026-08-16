@@ -5,6 +5,60 @@ reasoning, per `showcase-program/BATCH-2-STANDARDS.md`'s honesty
 architecture. Entries are added as they happen, not reconstructed after the
 fact.
 
+## M6 — CommitFlow overlap bug, found by dogfooding real data (real bug, fixed)
+
+**Not a spec deviation.** Every render up through M5 used either the
+fixture repo's short, hand-authored commit subjects or `EXAMPLE_PROPS`'
+short placeholder messages — none of them long enough to wrap to a second
+line. Rendering dogwatch's real history (`galley render --repo
+../dogwatch --from 478fcbb --to 5143aeb --facts ...`) surfaced a real
+layout bug on the first try: a long real commit subject
+("fix(ci): propagate the sibling-checkout fix to watch.yml/resume.yml/canary.yml
+(the M7 blocker)") wrapped to two lines and visually collided with the
+caption line and source label beneath it. Fixed in
+`src/render/composition/CommitFlow.tsx`: each sampled commit message is
+now a single-line, ellipsis-clamped `<span>` (`overflow: hidden;
+text-overflow: ellipsis; white-space: nowrap`) instead of an unconstrained
+wrap. Re-verified against dogwatch's actual longest subject and against
+tiltmeter's ("fix: health.yml YAML parse failure (7/7 silent fails) +
+readings 404 on the first real (skipped) run group", the longest subject
+across either dogfood repo) — both now render as a clean single line with
+`…`, no overlap. This is exactly the class of defect dogfooding with real
+repos (rather than only the fixture) exists to catch.
+
+## M6 — dogfood release ranges are commit SHAs, not tags (both repos have none)
+
+**Not a spec deviation** — `docs/SPEC.md` explicitly allows this
+("`--from`/`--to` accept any git ref (tags, SHAs, branches)"), recorded so
+the choice reads as deliberate rather than accidental. Neither dogwatch nor
+tiltmeter has any git tags, so both dogfood renders use real commit SHA
+ranges: dogwatch `478fcbb..5143aeb` (the CI-fix arc docs/SPEC.md's M6 line
+literally names: "propagate the sibling-checkout fix to
+watch.yml/resume.yml/canary.yml", 5 commits), tiltmeter `10218a4..db770ef`
+("latest" — 8 commits covering the site launch through the health.yml
+parse-failure fix). Because neither repo has a matching GitHub release or
+git tag for these SHAs, both renders' date beat correctly shows "no data —
+no GitHub release and no git tag named '<sha>'" — a second, independent
+real-world exercise of the D3 degrade-honestly path (the first being the
+fixture repo's M4 example), not a flaw in the dogfood choice.
+
+## M6 — dogfood facts.json generated from a real local test run, not sibling CI
+
+**Not a spec deviation** in effect (the numbers are 100% real), but the
+provenance path differs slightly from the CI-artifact story `facts init`
+describes. Both facts.json files were produced by literally running each
+repo's own real test command in this session
+(`pnpm vitest run --project unit --reporter=json` for dogwatch:
+243/246 real passes; `pnpm vitest run --reporter=json` for tiltmeter:
+423/423 real passes) and hand-copying the two counts into a facts.json —
+not by an actual CI pipeline run on those repos' GitHub Actions. The
+numbers are genuine test results from genuine runs (not invented), but
+they weren't captured via the `facts init` CI-step path itself. Recorded
+per the honesty architecture: "Incomplete data wears its flag... claims
+trace to committed artifacts" — the claim here is "a real local test run
+produced these counts," which is what actually happened, not "sibling
+repo's CI produced these counts."
+
 ## M0 — package manager and repo layout
 
 **Spec says:** nothing explicit about package manager or monorepo-vs-single-

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>galley — limitations</title>
+<meta name="description" content="What galley cannot know, and what it does not measure. Read this before you trust a number on screen.">
+<link rel="icon" href="../public/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../public/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+
+  <header class="hero">
+    <img class="lockup" src="../public/brand/lockup.svg" alt="galley — by Agent James">
+    <h1 class="tagline">Limitations</h1>
+    <p class="lede">
+      What galley cannot know, and what it does not measure. Read this before you trust a
+      number on screen.
+    </p>
+  </header>
+
+  <section>
+    <h2 class="section-title">Numbers are only as honest as their sources</h2>
+    <dl class="limits">
+      <dt>git</dt>
+      <dd>
+        Commit counts, authors, and files-changed stats are read directly from the target
+        repo's own history via <code class="inline">git log</code> /
+        <code class="inline">git diff --shortstat</code>. It is as accurate as the repo's
+        history — a rewritten history, a squash-merge policy, or a shallow clone
+        (<code class="inline">--depth</code>) changes what git itself reports, and galley
+        reports exactly what git reports, nothing more.
+      </dd>
+      <dt>facts.json</dt>
+      <dd>
+        Test counts, coverage, and custom facts are produced by the <em>target repo's own
+        CI</em>, not by galley. Galley validates that the file matches its schema and rejects
+        anything malformed — it does not, and cannot, verify that the numbers inside are true.
+        If a repo's CI lies or miscounts, galley's video repeats the lie faithfully, labeled
+        "from CI artifact" so a viewer knows exactly which claim to go verify.
+      </dd>
+      <dt>GitHub release metadata</dt>
+      <dd>
+        Requires network access and a working <code class="inline">gh</code> CLI session. If
+        either is unavailable, or the repo has no GitHub remote, or no release exists for the
+        target ref, galley degrades to git tag metadata instead of guessing — and if there's no
+        tag either, the beat renders "no data" rather than an invented date or title. Both
+        dogfood videos on the front page show exactly this beat, for real.
+      </dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2 class="section-title">Scope limits (v1, by design)</h2>
+    <dl class="limits">
+      <dt>One template</dt>
+      <dd>
+        Every video uses the same "release card" layout, parametrized by
+        <code class="inline">brand.json</code>. A different layout is a v2 decision, not a
+        runtime flag — this is a deliberate non-goal, not an oversight.
+      </dd>
+      <dt>720p (1280×720) default, 30–45s</dt>
+      <dd>
+        Longer or higher-resolution renders work but were not the tuned target; render time
+        scales roughly linearly with duration and resolution, and with the host machine's
+        CPU/GPU.
+      </dd>
+      <dt>No audio track in v1</dt>
+      <dd>
+        Silence is the honest default when there's no real narration or licensed music to
+        attach a claim to. A music bed is a v2 idea, not a v1 corner cut.
+      </dd>
+      <dt>Render time is real wall-clock time</dt>
+      <dd>
+        Dominated by launching a headless Chromium instance and encoding H.264 frame-by-frame.
+        It is not instantaneous, and a render can fail if the host machine cannot launch
+        Chromium (missing shared libraries on some minimal Linux containers, for example) —
+        galley surfaces that as an explicit error, not a hang.
+      </dd>
+      <dt><code class="inline">--from</code>/<code class="inline">--to</code> accept any git ref</dt>
+      <dd>
+        Tags, SHAs, branches — galley does not require semantic-version tags, but the closing
+        card's "version" text is only as meaningful as the ref you pass it. Both dogfood
+        examples on the front page use commit SHAs, not tags, because neither sibling repo
+        tags its releases.
+      </dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2 class="section-title">What galley does not attempt</h2>
+    <dl class="limits">
+      <dt>No judgment of release quality</dt>
+      <dd>
+        No quality score, no sentiment analysis of commit messages, no AI-generated summary of
+        what changed. The commit messages shown are sampled verbatim from git, not rewritten.
+      </dd>
+      <dt>No AI/LLM calls</dt>
+      <dd>
+        Every string on screen is either pulled verbatim from a data source or is static
+        template copy.
+      </dd>
+      <dt>No publishing</dt>
+      <dd>
+        galley does not publish, upload, or share the rendered video anywhere. The output is a
+        local <code class="inline">.mp4</code>/<code class="inline">.png</code> file; what
+        happens to it next is yours.
+      </dd>
+    </dl>
+  </section>
+
+  <footer>
+    <span>Full detail: <a class="textlink" href="../docs/limitations.md">docs/limitations.md</a></span>
+    <nav>
+      <a class="textlink" href="index.html">Back to the demo</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>

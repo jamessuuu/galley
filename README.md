@@ -8,10 +8,13 @@
 video. Every number is pulled straight from the pipeline — none of it is
 typed in by hand.**
 
-> **Status: in development (docs/SPEC.md milestones M0–M6).** See
-> [docs/DEVIATIONS.md](docs/DEVIATIONS.md) for what shipped differently than
-> spec'd, and [docs/limitations.md](docs/limitations.md) for what this tool
-> cannot know.
+> **Status: build complete (docs/SPEC.md milestones M0–M6), not yet
+> published.** See [docs/DEVIATIONS.md](docs/DEVIATIONS.md) for what
+> shipped differently than spec'd, and
+> [docs/limitations.md](docs/limitations.md) for what this tool cannot
+> know. `site/` is a static local demo (serve it with any static file
+> server, e.g. `npx serve site`) showing the real dogfood examples under
+> `examples/`; it is not deployed anywhere.
 
 ## What it is
 

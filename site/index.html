@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>galley — repo→release-video forge</title>
+<meta name="description" content="A CLI plus one Remotion template that renders a repo's real commits, CI runs, and test counts into a branded release video. Every number is sourced; none is typed by hand.">
+<link rel="icon" href="../public/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../public/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+
+  <header class="hero">
+    <img class="lockup" src="../public/brand/lockup.svg" alt="galley — by Agent James">
+    <h1 class="tagline">The release notes nobody reads, replaced by a<br>40-second video from data your CI already emits.</h1>
+    <p class="lede">
+      A CLI plus one <a class="textlink" href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a>
+      template that renders a repo's real commits, real GitHub release metadata, and real
+      CI test counts into a branded release video. Nothing on screen is typed by a human —
+      every figure traces to git, the GitHub releases API, or a <code class="inline">facts.json</code>
+      artifact the target repo's own CI produced, and every source is labeled on screen.
+    </p>
+    <span class="badge">v0.1.0 — in development</span>
+  </header>
+
+  <section id="video">
+    <h2 class="section-title">A real render, not a mockup</h2>
+    <video controls preload="metadata" poster="../examples/dogwatch-ci-fix.png">
+      <source src="../examples/dogwatch-ci-fix.mp4" type="video/mp4">
+      Your browser doesn't support inline video —
+      <a class="textlink" href="../examples/dogwatch-ci-fix.mp4">download the mp4</a> directly.
+    </video>
+    <p class="caption">
+      <code class="inline">galley render --repo dogwatch --from 478fcbb --to 5143aeb --facts facts.json</code><br>
+      dogwatch's real CI-fix release arc (5 commits, 1 contributor, 29 files changed), a real
+      <code class="inline">facts.json</code> from a real <code class="inline">vitest</code> run
+      (243/246 passing), rendered straight from dogwatch's own <code class="inline">git log</code>.
+      1280×720, 36s, 913KB, no audio track.
+    </p>
+  </section>
+
+  <section id="posters">
+    <h2 class="section-title">Same pipeline, two more real repos</h2>
+    <div class="poster-grid">
+      <figure class="poster-card">
+        <img src="../examples/dogwatch-ci-fix.png" alt="galley poster for dogwatch's CI-fix release, title card reading dogwatch 5143aeb">
+        <figcaption><strong>dogwatch</strong> — 478fcbb..5143aeb (poster, frame 0)</figcaption>
+      </figure>
+      <figure class="poster-card">
+        <img src="../examples/tiltmeter-latest.png" alt="galley poster for tiltmeter's latest range, title card reading tiltmeter db770ef">
+        <figcaption><strong>tiltmeter</strong> — 10218a4..db770ef (poster, frame 0), 423/423 tests, 44 files changed</figcaption>
+      </figure>
+    </div>
+    <p class="caption">
+      Neither range has a matching GitHub release or git tag (both repos dogfood without
+      tagging releases), so both posters show the title card's honest
+      <strong>"no data — no GitHub release and no git tag named…"</strong> beat instead of a
+      guessed date — the degrade-honestly path (death condition D3), exercised for real,
+      not just in a test.
+    </p>
+  </section>
+
+  <section id="quickstart">
+    <h2 class="section-title">Quickstart</h2>
+    <pre><span class="comment"># build once</span>
+npm install
+npm run build
+
+<span class="comment"># render a video from a real repo's real release range</span>
+node dist/cli/index.js render \
+  --repo /path/to/some/repo \
+  --from v1.0.0 --to v1.1.0 \
+  --out release.mp4
+
+<span class="comment"># same data, one still frame</span>
+node dist/cli/index.js poster \
+  --repo /path/to/some/repo \
+  --from v1.0.0 --to v1.1.0 \
+  --out release.png
+
+<span class="comment"># prints the CI step that generates facts.json from a real test run</span>
+node dist/cli/index.js facts init</pre>
+    <p class="caption">
+      Optional on <code class="inline">render</code>/<code class="inline">poster</code>:
+      <code class="inline">--brand brand.json</code>,
+      <code class="inline">--facts facts.json</code>,
+      <code class="inline">--reduced-motion</code> (render only — poster always renders the
+      static variant). Full CLI surface: <a class="textlink" href="../docs/SPEC.md">docs/SPEC.md</a>.
+    </p>
+  </section>
+
+  <section id="sources">
+    <h2 class="section-title">Why every number is real</h2>
+    <ul class="sources">
+      <li><strong>git</strong> — commit count, authors, sampled messages, files-changed
+        stats: extracted straight from <code class="inline">git log</code> /
+        <code class="inline">git diff --shortstat</code> against the target repo. Always
+        available, no network.</li>
+      <li><strong>GitHub release metadata</strong> — title/date/notes via
+        <code class="inline">gh api repos/{owner}/{repo}/releases</code>. Optional, requires
+        network; degrades honestly to git tag metadata (then to an explicit "no data" beat)
+        rather than guessing.</li>
+      <li><strong>facts.json</strong> — a small schema'd artifact the target repo's own CI
+        emits (test counts, coverage, up to two custom facts).
+        <code class="inline">galley facts init</code> prints the CI step that generates it.
+        Invalid facts are rejected outright, never partially rendered.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Part of the <a class="textlink" href="https://agentjames.vercel.app" target="_blank" rel="noopener">Agent James</a> portfolio.</span>
+    <nav>
+      <a class="textlink" href="limitations.html">Limitations</a>
+      <a class="textlink" href="../docs/SPEC.md">Spec</a>
+      <a class="textlink" href="../docs/DEVIATIONS.md">Deviations</a>
+      <a class="textlink" href="https://github.com/jamessuuu/galley" target="_blank" rel="noopener">Source</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>
