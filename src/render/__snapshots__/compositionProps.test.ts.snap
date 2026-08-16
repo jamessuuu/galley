@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`assembleCompositionProps against the fixture repo > assembles full props when every source is available (snapshot) 1`] = `
+{
+  "brand": {
+    "accent": "#B45309",
+    "font": "JetBrains Mono",
+    "ink": "#1A1712",
+    "logoSvgMarkup": null,
+    "name": "galley",
+    "paper": "#FAF7F2",
+  },
+  "closingBeat": {
+    "cta": "https://github.com/jamessuuu/sample-repo",
+    "source": "from git remote",
+  },
+  "commitsBeat": {
+    "authorCount": 2,
+    "authorNames": [
+      "Ada Cline",
+      "Nomi Reyes",
+    ],
+    "sampledMessages": [
+      "feat: add cli entry",
+      "refactor: simplify utils",
+      "fix: handle empty input in cli",
+      "chore: bump version to 1.1.0",
+    ],
+    "totalCommits": 4,
+  },
+  "dateBeat": {
+    "available": true,
+    "dateIso": "2024-03-10T09:00:00Z",
+    "source": "from GitHub release",
+  },
+  "factsBeat": {
+    "customFacts": [
+      {
+        "label": "bundle size",
+        "source": "from CI artifact",
+        "value": "84kb",
+      },
+      {
+        "label": "cold start",
+        "source": "from CI artifact",
+        "value": "310ms",
+      },
+    ],
+    "filesChangedFact": {
+      "deletions": 4,
+      "filesChanged": 3,
+      "insertions": 10,
+      "source": "from git",
+    },
+    "testsFact": {
+      "available": true,
+      "passed": 42,
+      "source": "from CI artifact",
+      "total": 44,
+    },
+  },
+  "reducedMotion": false,
+  "repoName": "sample-repo",
+  "version": "v1.1.0",
+}
+`;
