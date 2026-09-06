@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>galley — repo→release-video forge</title>
 <meta name="description" content="A CLI plus one Remotion template that renders a repo's real commits, CI runs, and test counts into a branded release video. Every number is sourced; none is typed by hand.">
-<link rel="icon" href="../public/brand/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../public/brand/apple-touch-icon.png">
+<link rel="icon" href="./vendor/public/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./vendor/public/brand/apple-touch-icon.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
 
   <header class="hero">
-    <img class="lockup" src="../public/brand/lockup.svg" alt="galley — by Agent James">
+    <img class="lockup" src="./vendor/public/brand/lockup.svg" alt="galley — by Agent James">
     <h1 class="tagline">The release notes nobody reads, replaced by a<br>40-second video from data your CI already emits.</h1>
     <p class="lede">
       A CLI plus one <a class="textlink" href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a>
@@ -27,10 +27,10 @@
 
   <section id="video">
     <h2 class="section-title">A real render, not a mockup</h2>
-    <video controls preload="metadata" poster="../examples/dogwatch-ci-fix.png">
-      <source src="../examples/dogwatch-ci-fix.mp4" type="video/mp4">
+    <video controls preload="metadata" poster="./vendor/examples/dogwatch-ci-fix.png">
+      <source src="./vendor/examples/dogwatch-ci-fix.mp4" type="video/mp4">
       Your browser doesn't support inline video —
-      <a class="textlink" href="../examples/dogwatch-ci-fix.mp4">download the mp4</a> directly.
+      <a class="textlink" href="./vendor/examples/dogwatch-ci-fix.mp4">download the mp4</a> directly.
     </video>
     <p class="caption">
       <code class="inline">galley render --repo dogwatch --from 478fcbb --to 5143aeb --facts facts.json</code><br>
@@ -45,11 +45,11 @@
     <h2 class="section-title">Same pipeline, two more real repos</h2>
     <div class="poster-grid">
       <figure class="poster-card">
-        <img src="../examples/dogwatch-ci-fix.png" alt="galley poster for dogwatch's CI-fix release, title card reading dogwatch 5143aeb">
+        <img src="./vendor/examples/dogwatch-ci-fix.png" alt="galley poster for dogwatch's CI-fix release, title card reading dogwatch 5143aeb">
         <figcaption><strong>dogwatch</strong> — 478fcbb..5143aeb (poster, frame 0)</figcaption>
       </figure>
       <figure class="poster-card">
-        <img src="../examples/tiltmeter-latest.png" alt="galley poster for tiltmeter's latest range, title card reading tiltmeter db770ef">
+        <img src="./vendor/examples/tiltmeter-latest.png" alt="galley poster for tiltmeter's latest range, title card reading tiltmeter db770ef">
         <figcaption><strong>tiltmeter</strong> — 10218a4..db770ef (poster, frame 0), 423/423 tests, 44 files changed</figcaption>
       </figure>
     </div>

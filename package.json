@@ -30,6 +30,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "brand": "node scripts/brand.mjs --project=galley --out=public/brand",
+    "build:site": "node scripts/build-site.mjs",
     "fixture:build": "tsx scripts/build-fixture-repo.ts",
     "cli": "tsx src/cli/index.ts"
   },
