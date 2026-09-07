@@ -3,125 +3,251 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>galley — repo→release-video forge</title>
-<meta name="description" content="A CLI plus one Remotion template that renders a repo's real commits, CI runs, and test counts into a branded release video. Every number is sourced; none is typed by hand.">
+<title>galley — release videos rendered from your pipeline's own data</title>
+<meta name="description" content="A CLI and one Remotion template that render a repo's real commits, real CI test counts and real release metadata into a branded release video. Every figure on screen is sourced; none is typed by hand.">
 <link rel="icon" href="./vendor/public/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./vendor/public/brand/apple-touch-icon.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<header class="site-header">
+  <div class="shell site-header__in">
+    <img class="lockup" src="./vendor/public/brand/lockup-reverse.svg" alt="galley, by Agent James">
+    <nav>
+      <a href="#render">the render</a>
+      <a href="#beats" data-optional>beats</a>
+      <a href="#sources" data-optional>sources</a>
+      <a href="limitations.html">limits</a>
+      <a href="https://github.com/jamessuuu/galley">source</a>
+    </nav>
+  </div>
+</header>
+
 <main>
 
-  <header class="hero">
-    <img class="lockup" src="./vendor/public/brand/lockup.svg" alt="galley — by Agent James">
-    <h1 class="tagline">The release notes nobody reads, replaced by a<br>40-second video from data your CI already emits.</h1>
-    <p class="lede">
-      A CLI plus one <a class="textlink" href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a>
-      template that renders a repo's real commits, real GitHub release metadata, and real
-      CI test counts into a branded release video. Nothing on screen is typed by a human —
-      every figure traces to git, the GitHub releases API, or a <code class="inline">facts.json</code>
-      artifact the target repo's own CI produced, and every source is labeled on screen.
-    </p>
-    <span class="badge">v0.1.0 — in development</span>
-  </header>
+  <!-- ============================================================= HERO -->
+  <section class="hero" id="render">
+    <div class="shell">
+      <p class="eyebrow">repo &rarr; release video</p>
+      <h1 class="display">Release notes nobody reads,<br><em>replaced by 36 seconds of data.</em></h1>
+      <p class="lede">
+        Every figure on screen traces to <code class="inline">git</code>, the GitHub releases
+        API, or a <code class="inline">facts.json</code> your own CI wrote. Nothing is typed by
+        hand.
+      </p>
 
-  <section id="video">
-    <h2 class="section-title">A real render, not a mockup</h2>
-    <video controls preload="metadata" poster="./vendor/examples/dogwatch-ci-fix.png">
-      <source src="./vendor/examples/dogwatch-ci-fix.mp4" type="video/mp4">
-      Your browser doesn't support inline video —
-      <a class="textlink" href="./vendor/examples/dogwatch-ci-fix.mp4">download the mp4</a> directly.
-    </video>
-    <p class="caption">
-      <code class="inline">galley render --repo dogwatch --from 478fcbb --to 5143aeb --facts facts.json</code><br>
-      dogwatch's real CI-fix release arc (5 commits, 1 contributor, 29 files changed), a real
-      <code class="inline">facts.json</code> from a real <code class="inline">vitest</code> run
-      (243/246 passing), rendered straight from dogwatch's own <code class="inline">git log</code>.
-      1280×720, 36s, 913KB, no audio track.
-    </p>
-  </section>
+      <div class="stage">
+        <figure class="screen" style="margin:0">
+          <div class="screen__bar">
+            <span>dogwatch &nbsp;478fcbb..5143aeb</span>
+            <span class="rec">real render</span>
+          </div>
+          <video controls autoplay muted loop playsinline preload="metadata"
+                 poster="./vendor/examples/beats/beat-1-title.webp"
+                 aria-label="galley's rendered release video for dogwatch's CI-fix release">
+            <source src="./vendor/examples/dogwatch-ci-fix.mp4" type="video/mp4">
+            <a class="textlink" href="./vendor/examples/dogwatch-ci-fix.mp4">Download the mp4</a>
+          </video>
+          <figcaption class="screen__foot">
+            <span>1280&times;720</span><span>36s</span><span>30fps</span><span>913 KB</span>
+            <span>no audio track</span>
+          </figcaption>
+        </figure>
 
-  <section id="posters">
-    <h2 class="section-title">Same pipeline, two more real repos</h2>
-    <div class="poster-grid">
-      <figure class="poster-card">
-        <img src="./vendor/examples/dogwatch-ci-fix.png" alt="galley poster for dogwatch's CI-fix release, title card reading dogwatch 5143aeb">
-        <figcaption><strong>dogwatch</strong> — 478fcbb..5143aeb (poster, frame 0)</figcaption>
-      </figure>
-      <figure class="poster-card">
-        <img src="./vendor/examples/tiltmeter-latest.png" alt="galley poster for tiltmeter's latest range, title card reading tiltmeter db770ef">
-        <figcaption><strong>tiltmeter</strong> — 10218a4..db770ef (poster, frame 0), 423/423 tests, 44 files changed</figcaption>
-      </figure>
+        <div>
+          <div class="readout-card">
+            <div class="rlabel"><span>what this render read</span><span>dogwatch</span></div>
+            <div class="figs">
+              <div class="fig">
+                <div class="fig__n">5</div>
+                <p class="fig__l">commits, 1 contributor</p>
+                <span class="src src--git">git log</span>
+              </div>
+              <div class="fig">
+                <div class="fig__n">29</div>
+                <p class="fig__l">files changed, +383 / &minus;62</p>
+                <span class="src src--git">git diff</span>
+              </div>
+              <div class="fig">
+                <div class="fig__n">243<span style="color:var(--ink-3)">/246</span></div>
+                <p class="fig__l">tests passing</p>
+                <span class="src src--ci">facts.json</span>
+              </div>
+              <div class="fig">
+                <div class="fig__n">&mdash;</div>
+                <p class="fig__l">no release, no tag</p>
+                <span class="src src--none">no data</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="readout-card">
+            <div class="rlabel"><span>the command</span></div>
+            <pre class="cli" style="box-shadow:none;background:transparent;padding:12px 0 0;margin:0"><span class="p">$</span> galley <b>render</b> --repo dogwatch \
+    --from 478fcbb --to 5143aeb \
+    --facts facts.json</pre>
+          </div>
+        </div>
+      </div>
+
+      <p class="note" style="margin-top:16px">
+        That fourth cell is the interesting one. dogwatch has no GitHub release and no git tag
+        for this range, so the title card says so on screen rather than guessing a date — the
+        degrade-honestly path, exercised for real.
+      </p>
     </div>
-    <p class="caption">
-      Neither range has a matching GitHub release or git tag (both repos dogfood without
-      tagging releases), so both posters show the title card's honest
-      <strong>"no data — no GitHub release and no git tag named…"</strong> beat instead of a
-      guessed date — the degrade-honestly path (death condition D3), exercised for real,
-      not just in a test.
-    </p>
   </section>
 
-  <section id="quickstart">
-    <h2 class="section-title">Quickstart</h2>
-    <pre><span class="comment"># build once</span>
-npm install
-npm run build
+  <!-- ============================================================ BEATS -->
+  <section class="band band--tone" id="beats">
+    <div class="shell">
+      <div class="band__head">
+        <span class="eyebrow">frames from that file</span>
+        <h2 class="section-title">Four beats, and where each number came from.</h2>
+      </div>
 
-<span class="comment"># render a video from a real repo's real release range</span>
-node dist/cli/index.js render \
-  --repo /path/to/some/repo \
-  --from v1.0.0 --to v1.1.0 \
-  --out release.mp4
+      <div class="beats">
+        <figure class="beat" style="margin:0">
+          <img src="./vendor/examples/beats/beat-1-title.webp" alt="Title card reading RELEASE, dogwatch, 5143aeb, with a line stating no GitHub release and no git tag named 5143aeb" width="1120" height="630" loading="lazy">
+          <figcaption class="beat__cap"><b>00:01 &middot; title</b>Says &ldquo;no data&rdquo; out loud instead of inventing a release date.</figcaption>
+        </figure>
+        <figure class="beat" style="margin:0">
+          <img src="./vendor/examples/beats/beat-2-commits.webp" alt="Commit flow card reading 5 commits from 1 contributor, James Santos, listing five real commit subjects" width="1120" height="630" loading="lazy">
+          <figcaption class="beat__cap"><b>00:14 &middot; commit flow</b>Five real subjects, read straight out of <code class="inline">git log</code>.</figcaption>
+        </figure>
+        <figure class="beat" style="margin:0">
+          <img src="./vendor/examples/beats/beat-3-numbers.webp" alt="Card reading 243 of 246 tests passed from a CI artifact and 29 files changed from git" width="1120" height="630" loading="lazy">
+          <figcaption class="beat__cap"><b>00:23 &middot; the real numbers</b>Each figure carries its own source label on screen.</figcaption>
+        </figure>
+        <figure class="beat" style="margin:0">
+          <img src="./vendor/examples/beats/beat-4-source.webp" alt="Closing card showing the repository URL, labelled as coming from the git remote" width="1120" height="630" loading="lazy">
+          <figcaption class="beat__cap"><b>00:31 &middot; get it</b>The remote URL, taken from the remote.</figcaption>
+        </figure>
+      </div>
+
+      <p class="note" style="margin-top:18px">
+        Same pipeline, a second repo:
+        <a href="./vendor/examples/tiltmeter-latest.png">tiltmeter&rsquo;s poster</a>
+        (10218a4..db770ef, 423/423 tests, 44 files changed) hits the same &ldquo;no data&rdquo;
+        beat — both repos dogfood without tagging releases.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================== SOURCES -->
+  <section class="band" id="sources">
+    <div class="shell">
+      <div class="band__head">
+        <span class="eyebrow">provenance</span>
+        <h2 class="section-title">Three sources. Every one of them labelled on screen.</h2>
+      </div>
+
+      <ol class="chain">
+        <li class="chain__row">
+          <span class="chain__n">01</span>
+          <div class="chain__id">
+            <span class="src src--git" style="margin:0">git</span>
+            <code>git log &middot; git diff --shortstat</code>
+          </div>
+          <p class="chain__what">Commit count, authors, sampled messages, files-changed stats.</p>
+          <div class="chain__meta">
+            <span class="pill pill--ok">always available</span>
+            <span class="pill">no network</span>
+          </div>
+        </li>
+        <li class="chain__row">
+          <span class="chain__n">02</span>
+          <div class="chain__id">
+            <span class="src src--gh" style="margin:0">github</span>
+            <code>gh api repos/&#123;owner&#125;/&#123;repo&#125;/releases</code>
+          </div>
+          <p class="chain__what">
+            Release title, date, notes. Falls back to git tag metadata, then to an explicit
+            &ldquo;no data&rdquo; beat &mdash; never to a guess.
+          </p>
+          <div class="chain__meta">
+            <span class="pill pill--net">needs network</span>
+            <span class="pill">optional</span>
+          </div>
+        </li>
+        <li class="chain__row">
+          <span class="chain__n">03</span>
+          <div class="chain__id">
+            <span class="src src--ci" style="margin:0">facts.json</span>
+            <code>galley facts init</code>
+          </div>
+          <p class="chain__what">
+            Test counts, coverage, up to two custom facts &mdash; written by the target repo&rsquo;s
+            own CI. Invalid files are rejected outright, never partially rendered.
+          </p>
+          <div class="chain__meta">
+            <span class="pill">schema-checked</span>
+            <span class="pill">your CI writes it</span>
+          </div>
+        </li>
+      </ol>
+
+      <details class="more">
+        <summary>What galley cannot know</summary>
+        <div class="body">
+          <p>
+            It reports exactly what git reports: a squash-merge policy, a rewritten history or a
+            shallow clone changes the numbers, and galley has no way to tell. It validates that
+            <code class="inline">facts.json</code> matches its schema; it cannot verify that the
+            numbers inside are true.
+          </p>
+          <p><a href="limitations.html">The full list &rarr;</a></p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ======================================================= QUICKSTART -->
+  <section class="band band--tone">
+    <div class="shell">
+      <div class="band__head">
+        <span class="eyebrow">quickstart</span>
+        <h2 class="section-title">Four commands.</h2>
+      </div>
+      <pre class="cli"><span class="comment"># build once</span>
+<span class="p">$</span> npm install &amp;&amp; npm run build
+
+<span class="comment"># a video from a real release range</span>
+<span class="p">$</span> node dist/cli/index.js <b>render</b> --repo /path/to/repo --from v1.0.0 --to v1.1.0 --out release.mp4
 
 <span class="comment"># same data, one still frame</span>
-node dist/cli/index.js poster \
-  --repo /path/to/some/repo \
-  --from v1.0.0 --to v1.1.0 \
-  --out release.png
+<span class="p">$</span> node dist/cli/index.js <b>poster</b> --repo /path/to/repo --from v1.0.0 --to v1.1.0 --out release.png
 
 <span class="comment"># prints the CI step that generates facts.json from a real test run</span>
-node dist/cli/index.js facts init</pre>
-    <p class="caption">
-      Optional on <code class="inline">render</code>/<code class="inline">poster</code>:
-      <code class="inline">--brand brand.json</code>,
-      <code class="inline">--facts facts.json</code>,
-      <code class="inline">--reduced-motion</code> (render only — poster always renders the
-      static variant). Full CLI surface: <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">docs/SPEC.md</a>.
-    </p>
+<span class="p">$</span> node dist/cli/index.js <b>facts init</b></pre>
+      <p class="note" style="margin-top:14px">
+        Optional on <code class="inline">render</code> and <code class="inline">poster</code>:
+        <code class="inline">--brand brand.json</code>,
+        <code class="inline">--facts facts.json</code>,
+        <code class="inline">--reduced-motion</code> (render only — a poster is always the static
+        variant). Full surface in
+        <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">SPEC.md</a>.
+      </p>
+    </div>
   </section>
 
-  <section id="sources">
-    <h2 class="section-title">Why every number is real</h2>
-    <ul class="sources">
-      <li><strong>git</strong> — commit count, authors, sampled messages, files-changed
-        stats: extracted straight from <code class="inline">git log</code> /
-        <code class="inline">git diff --shortstat</code> against the target repo. Always
-        available, no network.</li>
-      <li><strong>GitHub release metadata</strong> — title/date/notes via
-        <code class="inline">gh api repos/{owner}/{repo}/releases</code>. Optional, requires
-        network; degrades honestly to git tag metadata (then to an explicit "no data" beat)
-        rather than guessing.</li>
-      <li><strong>facts.json</strong> — a small schema'd artifact the target repo's own CI
-        emits (test counts, coverage, up to two custom facts).
-        <code class="inline">galley facts init</code> prints the CI step that generates it.
-        Invalid facts are rejected outright, never partially rendered.</li>
-    </ul>
-  </section>
+</main>
 
-  <footer>
+<footer class="site-footer">
+  <div class="shell">
     <!-- attribution-kit v1 -->
     <p class="aj-attribution">
       <svg class="aj-attribution__mark" viewBox="0 0 32 32" width="20" height="20" role="img" aria-label="Agent James"><path fill="currentColor" d="M1 10h3v4H1zM28 10h3v4h-3zM10 1h4v3h-4zM10 28h4v3h-4zM1 18h3v4H1zM28 18h3v4h-3zM18 1h4v3h-4zM18 28h4v3h-4z"/><path fill="currentColor" fill-rule="evenodd" d="M5 4h22a1 1 0 0 1 1 1v22a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM18.3 9h3.4v8a5.7 5.7 0 0 1-5.7 5.7H12v-3.4h4a2.3 2.3 0 0 0 2.3-2.3z"/><rect x="6.5" y="6.5" width="3.5" height="3.5" fill="var(--aj-attribution-signal, #B45309)"/></svg>Built by <a href="https://agentjames.vercel.app" rel="me noopener">James Lorenz Santos</a><span class="aj-attribution__sep" aria-hidden="true">&middot;</span><a href="https://www.linkedin.com/in/james-lorenz-santos-720776251/" rel="me noopener" target="_blank">LinkedIn</a>
     </p>
     <nav>
-      <a class="textlink" href="limitations.html">Limitations</a>
-      <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">Spec</a>
-      <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/DEVIATIONS.md">Deviations</a>
-      <a class="textlink" href="https://github.com/jamessuuu/galley" target="_blank" rel="noopener">Source</a>
+      <a href="limitations.html">limitations</a>
+      <a href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">spec</a>
+      <a href="https://github.com/jamessuuu/galley/blob/main/docs/DEVIATIONS.md">deviations</a>
+      <a href="https://github.com/jamessuuu/galley">source</a>
     </nav>
-  </footer>
+  </div>
+</footer>
 
-</main>
 </body>
 </html>

@@ -10,118 +10,139 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<header class="site-header">
+  <div class="shell site-header__in">
+    <img class="lockup" src="./vendor/public/brand/lockup-reverse.svg" alt="galley, by Agent James">
+    <nav>
+      <a href="index.html">home</a>
+      <a href="index.html#beats" data-optional>beats</a>
+      <a href="index.html#sources" data-optional>sources</a>
+      <a href="https://github.com/jamessuuu/galley">source</a>
+    </nav>
+  </div>
+</header>
+
 <main>
-
-  <header class="hero">
-    <img class="lockup" src="./vendor/public/brand/lockup.svg" alt="galley — by Agent James">
-    <h1 class="tagline">Limitations</h1>
-    <p class="lede">
-      What galley cannot know, and what it does not measure. Read this before you trust a
-      number on screen.
-    </p>
-  </header>
-
-  <section>
-    <h2 class="section-title">Numbers are only as honest as their sources</h2>
-    <dl class="limits">
-      <dt>git</dt>
-      <dd>
-        Commit counts, authors, and files-changed stats are read directly from the target
-        repo's own history via <code class="inline">git log</code> /
-        <code class="inline">git diff --shortstat</code>. It is as accurate as the repo's
-        history — a rewritten history, a squash-merge policy, or a shallow clone
-        (<code class="inline">--depth</code>) changes what git itself reports, and galley
-        reports exactly what git reports, nothing more.
-      </dd>
-      <dt>facts.json</dt>
-      <dd>
-        Test counts, coverage, and custom facts are produced by the <em>target repo's own
-        CI</em>, not by galley. Galley validates that the file matches its schema and rejects
-        anything malformed — it does not, and cannot, verify that the numbers inside are true.
-        If a repo's CI lies or miscounts, galley's video repeats the lie faithfully, labeled
-        "from CI artifact" so a viewer knows exactly which claim to go verify.
-      </dd>
-      <dt>GitHub release metadata</dt>
-      <dd>
-        Requires network access and a working <code class="inline">gh</code> CLI session. If
-        either is unavailable, or the repo has no GitHub remote, or no release exists for the
-        target ref, galley degrades to git tag metadata instead of guessing — and if there's no
-        tag either, the beat renders "no data" rather than an invented date or title. Both
-        dogfood videos on the front page show exactly this beat, for real.
-      </dd>
-    </dl>
+  <section class="hero hero--page">
+    <div class="shell">
+      <p class="eyebrow">limitations</p>
+      <h1 class="display">A number on screen<br><em>is only as honest as its source.</em></h1>
+      <p class="lede">What galley cannot know, and what it deliberately does not do.</p>
+    </div>
   </section>
 
-  <section>
-    <h2 class="section-title">Scope limits (v1, by design)</h2>
-    <dl class="limits">
-      <dt>One template</dt>
-      <dd>
-        Every video uses the same "release card" layout, parametrized by
-        <code class="inline">brand.json</code>. A different layout is a v2 decision, not a
-        runtime flag — this is a deliberate non-goal, not an oversight.
-      </dd>
-      <dt>720p (1280×720) default, 30–45s</dt>
-      <dd>
-        Longer or higher-resolution renders work but were not the tuned target; render time
-        scales roughly linearly with duration and resolution, and with the host machine's
-        CPU/GPU.
-      </dd>
-      <dt>No audio track in v1</dt>
-      <dd>
-        Silence is the honest default when there's no real narration or licensed music to
-        attach a claim to. A music bed is a v2 idea, not a v1 corner cut.
-      </dd>
-      <dt>Render time is real wall-clock time</dt>
-      <dd>
-        Dominated by launching a headless Chromium instance and encoding H.264 frame-by-frame.
-        It is not instantaneous, and a render can fail if the host machine cannot launch
-        Chromium (missing shared libraries on some minimal Linux containers, for example) —
-        galley surfaces that as an explicit error, not a hang.
-      </dd>
-      <dt><code class="inline">--from</code>/<code class="inline">--to</code> accept any git ref</dt>
-      <dd>
-        Tags, SHAs, branches — galley does not require semantic-version tags, but the closing
-        card's "version" text is only as meaningful as the ref you pass it. Both dogfood
-        examples on the front page use commit SHAs, not tags, because neither sibling repo
-        tags its releases.
-      </dd>
-    </dl>
-  </section>
+  <section class="band">
+    <div class="shell docs">
+      <nav class="docs__index" aria-label="on this page">
+        <span class="eyebrow">on this page</span>
+        <ol>
+          <li><a href="#sources">Where numbers can go wrong</a></li>
+          <li><a href="#scope">Scope limits, v1</a></li>
+          <li><a href="#never">What it does not attempt</a></li>
+        </ol>
+      </nav>
 
-  <section>
-    <h2 class="section-title">What galley does not attempt</h2>
-    <dl class="limits">
-      <dt>No judgment of release quality</dt>
-      <dd>
-        No quality score, no sentiment analysis of commit messages, no AI-generated summary of
-        what changed. The commit messages shown are sampled verbatim from git, not rewritten.
-      </dd>
-      <dt>No AI/LLM calls</dt>
-      <dd>
-        Every string on screen is either pulled verbatim from a data source or is static
-        template copy.
-      </dd>
-      <dt>No publishing</dt>
-      <dd>
-        galley does not publish, upload, or share the rendered video anywhere. The output is a
-        local <code class="inline">.mp4</code>/<code class="inline">.png</code> file; what
-        happens to it next is yours.
-      </dd>
-    </dl>
-  </section>
+      <div>
+        <h2 class="section-title" id="sources" style="font-size:1.5rem;margin-bottom:16px">Where numbers can go wrong</h2>
 
-  <footer>
+        <div class="callout">
+          <h3><span class="src src--git" style="margin:0 8px 0 0">git</span> reports what the history says</h3>
+          <p>
+            A squash-merge policy, a rewritten history or a shallow clone
+            (<code class="inline">--depth</code>) changes what git itself reports. galley repeats
+            git exactly, and has no way to tell the difference.
+          </p>
+        </div>
+
+        <div class="callout">
+          <h3><span class="src src--ci" style="margin:0 8px 0 0">facts.json</span> is your CI's word, not galley's</h3>
+          <p>
+            galley validates the file against its schema and rejects anything malformed. It
+            cannot verify the numbers inside. If a repo's CI miscounts, the video repeats the
+            miscount faithfully — labelled <strong>&ldquo;from CI artifact&rdquo;</strong> on
+            screen, so a viewer knows exactly which claim to go and check.
+          </p>
+        </div>
+
+        <div class="callout">
+          <h3><span class="src src--gh" style="margin:0 8px 0 0">github</span> needs a network and a session</h3>
+          <p>
+            Requires network access and a working <code class="inline">gh</code> CLI session. Without
+            either — or with no GitHub remote, or no release for the ref — galley degrades to git
+            tag metadata, then to an explicit &ldquo;no data&rdquo; beat. Never to an invented
+            date. Both examples on the home page show that beat for real.
+          </p>
+        </div>
+
+        <h2 class="section-title" id="scope" style="font-size:1.5rem;margin:44px 0 16px">Scope limits, v1</h2>
+        <table class="plain">
+          <tbody>
+            <tr>
+              <th>one template</th>
+              <td>Every video uses the same release-card layout, parametrised by
+              <code class="inline">brand.json</code>. A second layout is a v2 decision, not a
+              runtime flag.</td>
+            </tr>
+            <tr>
+              <th>720p, 30&ndash;45s</th>
+              <td>Longer or larger renders work but were not the tuned target. Render time scales
+              roughly linearly with duration, resolution and the host machine.</td>
+            </tr>
+            <tr>
+              <th>no audio</th>
+              <td>Silence is the honest default when there is no real narration or licensed music
+              to attach a claim to.</td>
+            </tr>
+            <tr>
+              <th>real wall-clock time</th>
+              <td>Dominated by launching headless Chromium and encoding H.264 frame by frame. A
+              render can fail if the host cannot launch Chromium — surfaced as an explicit
+              error, never as a hang.</td>
+            </tr>
+            <tr>
+              <th>any git ref</th>
+              <td>Tags, SHAs, branches all work. The closing card's version text is only as
+              meaningful as the ref you pass it; both examples use SHAs because neither sibling
+              repo tags releases.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 class="section-title" id="never" style="font-size:1.5rem;margin:44px 0 16px">What it does not attempt</h2>
+        <div class="callout">
+          <p style="margin-bottom:10px"><strong>No judgment of release quality.</strong> No score, no
+          sentiment analysis, no generated summary. Commit messages are sampled verbatim from git,
+          never rewritten.</p>
+          <p style="margin-bottom:10px"><strong>No model calls anywhere.</strong> Every string on
+          screen is either pulled verbatim from a data source or is static template copy.</p>
+          <p><strong>No publishing.</strong> The output is a local <code class="inline">.mp4</code>
+          or <code class="inline">.png</code>. What happens to it next is yours.</p>
+        </div>
+
+        <p class="note" style="margin-top:20px">
+          Full detail:
+          <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/limitations.md">docs/limitations.md</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell">
     <!-- attribution-kit v1 -->
     <p class="aj-attribution">
       <svg class="aj-attribution__mark" viewBox="0 0 32 32" width="20" height="20" role="img" aria-label="Agent James"><path fill="currentColor" d="M1 10h3v4H1zM28 10h3v4h-3zM10 1h4v3h-4zM10 28h4v3h-4zM1 18h3v4H1zM28 18h3v4h-3zM18 1h4v3h-4zM18 28h4v3h-4z"/><path fill="currentColor" fill-rule="evenodd" d="M5 4h22a1 1 0 0 1 1 1v22a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM18.3 9h3.4v8a5.7 5.7 0 0 1-5.7 5.7H12v-3.4h4a2.3 2.3 0 0 0 2.3-2.3z"/><rect x="6.5" y="6.5" width="3.5" height="3.5" fill="var(--aj-attribution-signal, #B45309)"/></svg>Built by <a href="https://agentjames.vercel.app" rel="me noopener">James Lorenz Santos</a><span class="aj-attribution__sep" aria-hidden="true">&middot;</span><a href="https://www.linkedin.com/in/james-lorenz-santos-720776251/" rel="me noopener" target="_blank">LinkedIn</a>
     </p>
-    <span>Full detail: <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/limitations.md">docs/limitations.md</a></span>
     <nav>
-      <a class="textlink" href="index.html">Back to the demo</a>
+      <a href="index.html">home</a>
+      <a href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">spec</a>
+      <a href="https://github.com/jamessuuu/galley/blob/main/docs/DEVIATIONS.md">deviations</a>
+      <a href="https://github.com/jamessuuu/galley">source</a>
     </nav>
-  </footer>
+  </div>
+</footer>
 
-</main>
 </body>
 </html>

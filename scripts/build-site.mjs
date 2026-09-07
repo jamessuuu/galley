@@ -25,7 +25,45 @@ const FILES = [
   ['examples/dogwatch-ci-fix.mp4', 'site/vendor/examples/dogwatch-ci-fix.mp4'],
   ['examples/dogwatch-ci-fix.png', 'site/vendor/examples/dogwatch-ci-fix.png'],
   ['examples/tiltmeter-latest.png', 'site/vendor/examples/tiltmeter-latest.png'],
+  // Four real frames lifted out of the shipped mp4 with ffmpeg (see
+  // examples/beats/README.md for the exact timestamps and command). They are
+  // the video's own pixels, not re-drawn mockups of it, so the "beats" strip
+  // on the home page cannot drift away from what the render actually shows.
+  ['examples/beats/beat-1-title.webp', 'site/vendor/examples/beats/beat-1-title.webp'],
+  ['examples/beats/beat-2-commits.webp', 'site/vendor/examples/beats/beat-2-commits.webp'],
+  ['examples/beats/beat-3-numbers.webp', 'site/vendor/examples/beats/beat-3-numbers.webp'],
+  ['examples/beats/beat-4-source.webp', 'site/vendor/examples/beats/beat-4-source.webp'],
+  // The site's display and prose faces. Self-hosted beside their OFL licences
+  // so the page makes no third-party font request.
+  ['public/fonts/space-grotesk/SpaceGrotesk[wght].woff2', 'site/vendor/public/fonts/space-grotesk/SpaceGrotesk[wght].woff2'],
+  ['public/fonts/space-grotesk/OFL.txt', 'site/vendor/public/fonts/space-grotesk/OFL.txt'],
+  ['public/fonts/manrope/Manrope[wght].woff2', 'site/vendor/public/fonts/manrope/Manrope[wght].woff2'],
+  ['public/fonts/manrope/OFL.txt', 'site/vendor/public/fonts/manrope/OFL.txt'],
 ];
+
+// The shipped lockup is drawn in brand ink (#1A1712) for a paper ground, and
+// the site is now a dark surface — on which it is very nearly invisible. The
+// reverse variant is DERIVED here rather than hand-drawn and committed, so it
+// cannot drift from the real lockup: exactly one substitution, ink -> paper,
+// leaving the amber rule untouched. Same rule the brand kit itself uses for
+// its reverse variants.
+const DERIVED = [
+  {
+    src: 'public/brand/lockup.svg',
+    dest: 'site/vendor/public/brand/lockup-reverse.svg',
+    transform: (svg) =>
+      svg
+        .replaceAll('#1A1712', '#FAF7F2')
+        .replace('aria-label="galley', 'aria-label="galley, reverse variant — galley'),
+  },
+];
+
+for (const { src, dest, transform } of DERIVED) {
+  const destPath = path.join(ROOT, dest);
+  fs.mkdirSync(path.dirname(destPath), { recursive: true });
+  fs.writeFileSync(destPath, transform(fs.readFileSync(path.join(ROOT, src), 'utf8')));
+  console.log(`build-site: ${src} -> ${dest} (derived)`);
+}
 
 for (const [src, dest] of FILES) {
   const srcPath = path.join(ROOT, src);
