@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>galley — release videos rendered from your pipeline's own data</title>
+<title>galley: release videos rendered from your pipeline's own data</title>
 <meta name="description" content="A CLI and one Remotion template that render a repo's real commits, real CI test counts and real release metadata into a branded release video. Every figure on screen is sourced; none is typed by hand.">
 <link rel="icon" href="./vendor/public/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./vendor/public/brand/apple-touch-icon.png">
@@ -76,7 +76,7 @@
                 <span class="src src--ci">facts.json</span>
               </div>
               <div class="fig">
-                <div class="fig__n">&mdash;</div>
+                <div class="fig__n">none</div>
                 <p class="fig__l">no release, no tag</p>
                 <span class="src src--none">no data</span>
               </div>
@@ -85,7 +85,7 @@
 
           <div class="readout-card">
             <div class="rlabel"><span>the command</span></div>
-            <pre class="cli" style="box-shadow:none;background:transparent;padding:12px 0 0;margin:0"><span class="p">$</span> galley <b>render</b> --repo dogwatch \
+            <pre class="cli" tabindex="0" style="box-shadow:none;background:transparent;padding:12px 0 0;margin:0"><span class="p">$</span> galley <b>render</b> --repo dogwatch \
     --from 478fcbb --to 5143aeb \
     --facts facts.json</pre>
           </div>
@@ -94,7 +94,7 @@
 
       <p class="note" style="margin-top:16px">
         That fourth cell is the interesting one. dogwatch has no GitHub release and no git tag
-        for this range, so the title card says so on screen rather than guessing a date — the
+        for this range, so the title card says so on screen rather than guessing a date: the
         degrade-honestly path, exercised for real.
       </p>
     </div>
@@ -131,7 +131,7 @@
         Same pipeline, a second repo:
         <a href="./vendor/examples/tiltmeter-latest.png">tiltmeter&rsquo;s poster</a>
         (10218a4..db770ef, 423/423 tests, 44 files changed) hits the same &ldquo;no data&rdquo;
-        beat — both repos dogfood without tagging releases.
+        beat; both repos dogfood without tagging releases.
       </p>
     </div>
   </section>
@@ -165,7 +165,7 @@
           </div>
           <p class="chain__what">
             Release title, date, notes. Falls back to git tag metadata, then to an explicit
-            &ldquo;no data&rdquo; beat &mdash; never to a guess.
+            &ldquo;no data&rdquo; beat, never to a guess.
           </p>
           <div class="chain__meta">
             <span class="pill pill--net">needs network</span>
@@ -179,7 +179,7 @@
             <code>galley facts init</code>
           </div>
           <p class="chain__what">
-            Test counts, coverage, up to two custom facts &mdash; written by the target repo&rsquo;s
+            Test counts, coverage, up to two custom facts, written by the target repo&rsquo;s
             own CI. Invalid files are rejected outright, never partially rendered.
           </p>
           <div class="chain__meta">
@@ -211,7 +211,7 @@
         <span class="eyebrow">quickstart</span>
         <h2 class="section-title">Four commands.</h2>
       </div>
-      <pre class="cli"><span class="comment"># build once</span>
+      <pre class="cli" tabindex="0"><span class="comment"># build once</span>
 <span class="p">$</span> npm install &amp;&amp; npm run build
 
 <span class="comment"># a video from a real release range</span>
@@ -226,7 +226,7 @@
         Optional on <code class="inline">render</code> and <code class="inline">poster</code>:
         <code class="inline">--brand brand.json</code>,
         <code class="inline">--facts facts.json</code>,
-        <code class="inline">--reduced-motion</code> (render only — a poster is always the static
+        <code class="inline">--reduced-motion</code> (render only; a poster is always the static
         variant). Full surface in
         <a class="textlink" href="https://github.com/jamessuuu/galley/blob/main/docs/SPEC.md">SPEC.md</a>.
       </p>
